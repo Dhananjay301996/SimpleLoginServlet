@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 @WebServlet(
         description = "Login Servlet Testing",
@@ -20,23 +21,35 @@ import java.io.PrintWriter;
 
 public class LoginServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //get servlet parameters for userID and password
-        String user = request.getParameter("user");
-        String pwd = request.getParameter("pwd");
-        //get servlet configuration init params
-        String userID = getServletConfig().getInitParameter("user");
-        String password = getServletConfig().getInitParameter("password");
-        if(userID.equals(user) && password.equals(pwd)) {
-            request.setAttribute("user", user);
-            request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
-        }else{
-            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
-            PrintWriter out = response.getWriter();
-            out.println("<font color=red>Either user name or password is wrong.</font>");
-            rd.include(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /*
+        /get request parameters for username and password
+         */
 
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+
+        /*
+        /get servlet config init params
+         */
+
+        String pass = getServletConfig().getInitParameter("password");
+
+        if (isNameValid(username) && password.equals(pass)){
+            req.setAttribute("username", username);
+            req.getRequestDispatcher("loginSuccess.jsp").forward(req,resp);
+        }else{
+            RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher("/login.html");
+            PrintWriter out = resp.getWriter();
+            out.write("<font color=red> User name or password is wrong!.</font>");
+            requestDispatcher.include(req, resp);
+            out.close();
         }
     }
 
+    public boolean isNameValid(String name){
+        return Pattern.compile("[A-Z][a-z]{2,}").matcher(name).matches();
+    }
+
 }
+
