@@ -47,9 +47,13 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    public boolean isNameValid(String name){
+    public boolean isNameValid(String name) {
         return Pattern.compile("[A-Z][a-z]{2,}").matcher(name).matches();
     }
+        public boolean isPasswordValid(String password){
+            return Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=[^@#$%^&*+=]*[@#$%^&*+=][^@#$%^&*+=]*$).{8,}$").matcher(password).matches();
+        }
+    }
 
-}
+
 
